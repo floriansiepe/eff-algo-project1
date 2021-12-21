@@ -4,7 +4,7 @@ import java.util.List;
 public class Solver {
     public static final int TURNOVER_FARM = 740;
     public static final int TURNOVER_FABRIC = 1800;
-    public final BinomialCoefficient coefficient = new BinomialCoefficient();
+    public static final BinomialCoefficient COEFFICIENT = new BinomialCoefficient();
 
     public static void main(String[] args) throws IOException {
         final var inputReader = new InputReader();
@@ -37,18 +37,20 @@ public class Solver {
             for (int j = 1; j <= W; j++) {
                 final var last = entities.get(i - 1);
 
-                final var farm = m[i - 1][j - 1].turnover + TURNOVER_FARM - last.costF;
+                final var farmCopy = m[i - 1][j - 1].copy();
+                farmCopy.farm.add(last);
+                final var revenueFarm = farmCopy.computeRevenue();
 
-                final var fabric = m[i - 1][j].turnover + TURNOVER_FABRIC - last.costM - coefficient.biomialTo2(j);
-                if (farm > fabric) {
-                    final var farmCopy = m[i - 1][j - 1].copy();
-                    farmCopy.farm.add(last);
-                    farmCopy.turnover += TURNOVER_FARM;
+                final var fabricCopy = m[i - 1][j].copy();
+                fabricCopy.fabric.add(last);
+                final var revenueFabric = fabricCopy.computeRevenue();
+
+
+                if (revenueFarm > revenueFabric) {
+                    farmCopy.turnover = revenueFarm;
                     m[i][j] = farmCopy;
                 } else {
-                    final var fabricCopy = m[i - 1][j].copy();
-                    fabricCopy.fabric.add(last);
-                    fabricCopy.turnover += TURNOVER_FABRIC;
+                    fabricCopy.turnover = revenueFabric;
                     m[i][j] = fabricCopy;
                 }
             }

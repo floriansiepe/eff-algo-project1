@@ -15,4 +15,12 @@ public class Robot {
         this.special = special;
     }
 
+    @Override
+    public String toString() {
+        return "Robot{" +
+                "name='" + name + '\'' +
+                ", costM=" + costM +
+                ", costF=" + costF +
+                '}';
+    }
 }

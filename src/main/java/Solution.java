@@ -21,12 +21,37 @@ public class Solution {
         return new Solution(new LinkedList<>(fabric), new LinkedList<>(farm), turnover);
     }
 
+    public long computeRevenue() {
+        var revenue = (long) Solver.TURNOVER_FABRIC * fabric.size() - Solver.COEFFICIENT.biomialTo2(fabric.size()) + Solver.TURNOVER_FARM * farm.size();
+
+        for (final Robot robot : fabric) {
+            revenue-=robot.costM;
+        }
+        for (final Robot robot : farm) {
+            revenue-=robot.costF;
+        }
+        return revenue;
+    }
+
     @Override
     public String toString() {
-        return "Solution{" +
-                "fabric=" + fabric +
-                ", farm=" + farm +
-                ", turnover=" + turnover +
-                '}';
+        final var builder = new StringBuilder();
+        builder.append("Solution\n");
+        builder.append("Fabric:\n");
+        for (final Robot robot : fabric) {
+            builder.append(robot.toString());
+            builder.append("\n");
+        }
+
+        builder.append("Farm:\n");
+        for (final Robot robot : farm) {
+            builder.append(robot.toString());
+            builder.append("\n");
+        }
+        builder.append("Turnover:\n");
+        builder.append(turnover);
+        builder.append("\n");
+        builder.append(computeRevenue());
+        return builder.toString();
     }
 }
