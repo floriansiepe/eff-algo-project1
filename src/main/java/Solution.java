@@ -1,24 +1,22 @@
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Solution {
     List<Robot> fabric = new LinkedList<>();
     List<Robot> farm = new LinkedList<>();
-    long turnover = 0;
+    long revenue = 0;
 
     public Solution() {
     }
 
-    public Solution(final List<Robot> fabric, final List<Robot> farm, final long turnover) {
+    public Solution(final List<Robot> fabric, final List<Robot> farm, final long revenue) {
         this.fabric = fabric;
         this.farm = farm;
-        this.turnover = turnover;
+        this.revenue = revenue;
     }
 
     public Solution copy() {
-        return new Solution(new LinkedList<>(fabric), new LinkedList<>(farm), turnover);
+        return new Solution(new LinkedList<>(fabric), new LinkedList<>(farm), revenue);
     }
 
     public long computeRevenue() {
@@ -49,7 +47,7 @@ public class Solution {
             builder.append("\n");
         }
         builder.append("Turnover by table:\n");
-        builder.append(turnover);
+        builder.append(revenue);
         builder.append("\n");
         builder.append("Turnover directly by solution\n");
         builder.append(computeRevenue());

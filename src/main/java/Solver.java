@@ -37,19 +37,19 @@ public class Solver {
             for (int j = 1; j <= W; j++) {
                 final var last = entities.get(i - 1);
 
-                final var revenueFarm = m[i - 1][j - 1].turnover + TURNOVER_FARM - last.costF;
+                final var revenueFarm = m[i - 1][j - 1].revenue + TURNOVER_FARM - last.costF;
                 // We must subtract the previous bion. coeff. Otherwise, we substract it multiple times
-                final var revenueFabric = m[i - 1][j].turnover + TURNOVER_FABRIC - last.costM - COEFFICIENT.biomialTo2(m[i - 1][j].fabric.size() + 1) + COEFFICIENT.biomialTo2(m[i - 1][j].fabric.size());
+                final var revenueFabric = m[i - 1][j].revenue + TURNOVER_FABRIC - last.costM - COEFFICIENT.biomialTo2(m[i - 1][j].fabric.size() + 1) + COEFFICIENT.biomialTo2(m[i - 1][j].fabric.size());
 
                 if (revenueFarm > revenueFabric) {
                     final var farmCopy = m[i - 1][j - 1].copy();
                     farmCopy.farm.add(last);
-                    farmCopy.turnover = revenueFarm;
+                    farmCopy.revenue = revenueFarm;
                     m[i][j] = farmCopy;
                 } else {
                     final var fabricCopy = m[i - 1][j].copy();
                     fabricCopy.fabric.add(last);
-                    fabricCopy.turnover = revenueFabric;
+                    fabricCopy.revenue = revenueFabric;
                     m[i][j] = fabricCopy;
                 }
             }
