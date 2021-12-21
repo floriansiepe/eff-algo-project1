@@ -48,9 +48,10 @@ public class Solution {
             builder.append(robot.toString());
             builder.append("\n");
         }
-        builder.append("Turnover:\n");
+        builder.append("Turnover by table:\n");
         builder.append(turnover);
         builder.append("\n");
+        builder.append("Turnover directly by solution\n");
         builder.append(computeRevenue());
         return builder.toString();
     }
