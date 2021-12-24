@@ -1,7 +1,6 @@
 Name,KostenFabrik,KostenFarm,Schuhgroesse,Lieblingsessen,Besonderheit
-Olaf,9001,0,50,Frikadellen,bekommt leicht eine Erkaeltung
 Christian,1677,571,45,Falafel,%
 Gabriele,1487,757,49,Salat,%
-Matthias,1570,680,39,Obst,%
+Matthias,1570,511,39,Obst,%
 Bernhard,1413,852,50,Convenience-Schnitzel,%
-Oliver,1809,745,41,Tacos,%
+Oliver,1809,745,41,Tacos,bekommt leicht eine Erkaeltung

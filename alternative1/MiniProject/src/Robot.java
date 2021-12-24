@@ -1,5 +1,8 @@
 public class Robot {
-    String name;
+    /*
+    * added place and difference to Robot class
+    * */
+	String name;
     int costM;
     int costF;
     int shoeSize;
