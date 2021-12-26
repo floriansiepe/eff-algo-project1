@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class OptimizeIncome {
     List<Robot> robots;
+    HashMap<Integer,Long> binomialMap;
     int countManufacture = 0;
     /* difference needed for check what is better to choose between manufacture with vent or farm   */
     public double difference(double a, double b){
@@ -25,6 +27,7 @@ public class OptimizeIncome {
 
     public void initialize(String fileName){
         robots = new ArrayList<>();
+        binomialMap = new HashMap<>();
         int counter = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -47,24 +50,26 @@ public class OptimizeIncome {
         }
     }
 
-    public double optInc(double umsatzFabrik,double umsatzFarm){
+    public double optInc(double turnoverManufacture,double turnoverFarm){
 
         double income = 0.0;
         /*
         * add place and difference to Robot with variable costs
         *  */
         for(var robot:robots){
-            var fabrik = umsatzFabrik-robot.costM;
-            var farm = umsatzFarm - robot.costF;
+            var fabrik = turnoverManufacture-robot.costM;
+            var farm = turnoverFarm - robot.costF;
             if(robot.special.equals("bekommt leicht eine Erkaeltung")){
                 robot.place = "manufacture";
                 robot.difference = difference(fabrik,farm);
                 countManufacture++;
+                binomialMap.put(countManufacture,countBinomialKoeffizient(countManufacture));
             }else{
-                if((umsatzFabrik-robot.costM)>umsatzFarm-robot.costF){
+                if((turnoverManufacture-robot.costM)>turnoverFarm-robot.costF){
                     robot.place = "manufacture";
                     robot.difference = difference(fabrik,farm);
                     countManufacture++;
+                    binomialMap.put(countManufacture,countBinomialKoeffizient(countManufacture));
                 }else{
                     robot.place = "farm";
                     robot.difference = difference(fabrik,farm);;
@@ -76,35 +81,36 @@ public class OptimizeIncome {
         /* change Robot place if alternative without vent is better */
         var venting = 0.0;
         for(var robot:robots){
-            venting = countBinomialKoeffizient(countManufacture,2) - countBinomialKoeffizient(countManufacture-1,2);
+            venting = binomialMap.get(countManufacture) - binomialMap.get(countManufacture-1);
             if(robot.special.equals("bekommt leicht eine Erkaeltung")){
-                income += umsatzFabrik-robot.costM;
+                income += turnoverManufacture-robot.costM;
             }else {
                 if(robot.place.equals("manufacture")){
                     if(robot.difference<venting){
                         robot.place = "farm";
-                        income += umsatzFarm - robot.costF;
+                        income += turnoverFarm - robot.costF;
                         countManufacture--;
                     }else{
-                        income += umsatzFabrik - robot.costM;
+                        income += turnoverManufacture - robot.costM;
                     }
                 }else{
-                    income += umsatzFarm - robot.costF;
+                    income += turnoverFarm - robot.costF;
                 }
             }
 
 
         }
-        venting = countBinomialKoeffizient(countManufacture,2);
+        venting = binomialMap.get(countManufacture);
         return income - venting;
     }
 
-    public long countBinomialKoeffizient(int n, int k) {
+    public long countBinomialKoeffizient(int n) {
+        int k = 2;
         if (n<k) return 0;
         if (n<2*k) k = n-k;
         if (k==1) return n;
         if (k == 0) return 1;
-        else return countBinomialKoeffizient(n-1,k-1) + countBinomialKoeffizient(n-1,k);
+        else return n-1 + binomialMap.get(n-1);
     }
 
 
@@ -112,13 +118,15 @@ public class OptimizeIncome {
 
     public static void main(String[] args){
         var optInc = new OptimizeIncome();
+        var timeStart = System.nanoTime();
         optInc.initialize("RoboterTest.csv");
         System.out.println(optInc.optInc(1800,740));
+        var timeEnd = System.nanoTime() - timeStart;
+        System.out.println(timeEnd);
         /*
-        * expected 1086 returned 1086
+        * expected 1086.0 returned 1086.0
         *
         * */
-
 
 
     }
