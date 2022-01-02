@@ -20,7 +20,7 @@ public class Solution {
     }
 
     public long computeRevenue() {
-        var revenue = (long) Solver.TURNOVER_FABRIC * fabric.size() - Solver.COEFFICIENT.biomialTo2(fabric.size()) + Solver.TURNOVER_FARM * farm.size();
+        var revenue = (long) Solver.TURNOVER_FABRIC * fabric.size() - Solver.COEFFICIENT.binomialTo2(fabric.size()) + Solver.TURNOVER_FARM * farm.size();
 
         for (final Robot robot : fabric) {
             revenue-=robot.costM;

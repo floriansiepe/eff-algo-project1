@@ -7,7 +7,7 @@ class BinomialCoefficient {
     private int maxN, maxK = 0;
     private HashMap<Integer, Long> cachedResults  = new HashMap<>();;
 
-    public long biomialTo2(int n) {
+    public long binomialTo2(int n) {
         return cachedResults.computeIfAbsent(n, v -> binomial(v, 2));
     }
 

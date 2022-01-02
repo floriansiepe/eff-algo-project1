@@ -1,7 +1,7 @@
 public class Robot {
     String name;
-    int costM;
-    int costF;
+    int costM;  //Fabrik
+    int costF;  //Farm
     int shoeSize;
     String fFood;
     String special;
