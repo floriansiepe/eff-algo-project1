@@ -16,9 +16,13 @@ public class Solver {
         TURNOVER_FARM = Integer.parseInt(args[1]);
         TURNOVER_FABRIC = Integer.parseInt(args[2]);
         final var solver = new Solver();
-        final var solution = solver.solve(robots);
+        final var solution = solver.solve4(robots);
         System.out.println(solution);
     }
+    /**
+    solve 3 mit Extrawünschen
+    solve 4 ohne Extrawünsche
+    */
 
     private Solution solve(final List<Robot> robots) {
         return knapsackDP(robots);
@@ -26,6 +30,10 @@ public class Solver {
 
     private Solution solve3(final List<Robot> robots) {
         return linearMethod(robots);
+    }
+
+    private Solution solve4(final List<Robot> robots) {
+        return linearMethod2(robots);
     }
 
     Solution linearMethod(List<Robot> robots) {
@@ -54,7 +62,6 @@ public class Solver {
                     i++;
                 }
             }
-
         }
         //Danach sortieren, wie viel sie mehr auf der Fabrik einbringen (aufsteigend sortiert)
         sortedRobots.sort(new Comparator<Robot>() {
@@ -90,6 +97,65 @@ public class Solver {
             System.out.println(r.costM);
             robotsFabric.add(r);
         }
+        robotsFarm.addAll(sortedRobots.subList(0, bestI + 1));
+        robotsFabric.addAll(sortedRobots.subList(bestI + 1, sortedRobots.size()));
+        System.out.println(revenue);
+        System.out.println(robotsFarm.size() + robotsFabric.size());
+        return new Solution(robotsFabric, robotsFarm, revenue);
+    }
+
+    Solution linearMethod2(List<Robot> robots) {
+        int numberRobots = robots.size();
+        long revenue = 0;
+        List<Robot> robotsFarm = new LinkedList<>();
+        List<Robot> robotsFabric = new LinkedList<>();
+        if(numberRobots <= 0) {
+            return new Solution();
+        }
+        List<Robot> sortedRobots = new ArrayList<>(robots);
+        //Alle Roboter, die eh mehr auf der Farm einbringen
+        for(int i = 0; i < sortedRobots.size();) {
+            Robot r = sortedRobots.get(i);
+            int farmRevenue = TURNOVER_FARM - r.costF;
+            if(farmRevenue >= TURNOVER_FABRIC - r.costM) {
+                robotsFarm.add(r);
+                revenue += farmRevenue;
+                sortedRobots.remove(i);
+            } else {
+                i++;
+            }
+
+        }
+        //Danach sortieren, wie viel sie mehr auf der Fabrik einbringen (aufsteigend sortiert)
+        sortedRobots.sort(new Comparator<Robot>() {
+            @Override
+            public int compare(Robot r1, Robot r2) {
+                int r1MoreRevenueFabric =  (TURNOVER_FABRIC - r1.costM) - (TURNOVER_FARM - r1.costF);
+                int r2MoreRevenueFabric =  (TURNOVER_FABRIC - r2.costM) - (TURNOVER_FARM - r2.costF);
+                return r1MoreRevenueFabric - r2MoreRevenueFabric;
+            }
+        });
+        long revenueFarm = revenue;
+        int revenueFabric = 0;
+        long climateCosts = COEFFICIENT.binomialTo2(sortedRobots.size());
+        for(Robot r: sortedRobots) {
+            revenueFabric += TURNOVER_FABRIC - r.costM;
+        }
+        long bestTotalRevenue = revenueFarm + revenueFabric - climateCosts;
+        int bestI = -1;
+        for(int i = 0; i < sortedRobots.size(); i++) {
+            Robot newFarmRobot = sortedRobots.get(i);
+            revenueFarm += (TURNOVER_FARM - newFarmRobot.costF);
+            revenueFabric -= (TURNOVER_FABRIC - newFarmRobot.costM);
+            climateCosts = COEFFICIENT.binomialTo2(sortedRobots.size() - i - 1);
+            long newTotalRevenue = revenueFarm + revenueFabric - climateCosts;
+            if(newTotalRevenue > bestTotalRevenue) {
+                bestI = i;
+                bestTotalRevenue = newTotalRevenue;
+            }
+        }
+        revenue = bestTotalRevenue;
+
         robotsFarm.addAll(sortedRobots.subList(0, bestI + 1));
         robotsFabric.addAll(sortedRobots.subList(bestI + 1, sortedRobots.size()));
         System.out.println(revenue);
