@@ -2,13 +2,19 @@ import java.io.IOException;
 import java.util.*;
 
 public class Solver {
-    public static final int TURNOVER_FARM = 740;
-    public static final int TURNOVER_FABRIC = 1800;
     public static final BinomialCoefficient COEFFICIENT = new BinomialCoefficient();
+    public static int TURNOVER_FABRIC;
+    public static int TURNOVER_FARM;
 
     public static void main(String[] args) throws IOException {
+        if (args.length != 3) {
+            System.err.println("java -jar solver.jar <file-path> <turnover_farm> <turnover_fabric>");
+            return;
+        }
         final var inputReader = new InputReader();
-        final var robots = inputReader.readFile("Roboterliste.csv");
+        final var robots = inputReader.readFile(args[0]);
+        TURNOVER_FARM = Integer.parseInt(args[1]);
+        TURNOVER_FABRIC = Integer.parseInt(args[2]);
         final var solver = new Solver();
         final var solution = solver.solve(robots);
         System.out.println(solution);
@@ -109,7 +115,6 @@ public class Solver {
         for (int i = 1; i <= n; i++) {
             for (int j = 1; j <= W; j++) {
                 final var last = entities.get(i - 1);
-
                 final var revenueFarm = m[i - 1][j - 1].revenue + TURNOVER_FARM - last.costF;
                 // We must subtract the previous bion. coeff. Otherwise, we substract it multiple times
                 final var revenueFabric = m[i - 1][j].revenue + TURNOVER_FABRIC - last.costM - COEFFICIENT.binomialTo2(m[i - 1][j].fabric.size() + 1) + COEFFICIENT.binomialTo2(m[i - 1][j].fabric.size());
